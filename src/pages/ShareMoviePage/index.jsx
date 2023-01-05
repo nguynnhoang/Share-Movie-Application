@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Button, Card, CardBody, CardHeader, Col, Form, FormGroup, Input, Label, Row } from "reactstrap"
+import { Alert, Button, Card, CardBody, CardHeader, Col, Form, FormGroup, Input, Label, Row } from "reactstrap"
 import { YoutubeContext } from "../../contexts/YoutubeContext";
 
 
@@ -9,6 +9,8 @@ import { YoutubeContext } from "../../contexts/YoutubeContext";
 const ShareMoviePage = () => {
 
     const { shareVideo } = useContext(YoutubeContext)
+
+    const [err, setError] = useState('')
 
     const [formValue, setFormValue] = useState({
         youtubeURL: ''
@@ -20,9 +22,15 @@ const ShareMoviePage = () => {
         console.log(formValue)
     }
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault()
-        shareVideo(formValue.youtubeURL)
+        if (err) setError('')
+        try {
+            await shareVideo(formValue.youtubeURL)
+        } catch (error) {
+            setError(error.message)
+            //console.log(error.message)
+        }
     }
 
     return (
@@ -32,22 +40,20 @@ const ShareMoviePage = () => {
                     <CardHeader>Share a youtube video</CardHeader>
                     <CardBody>
                         <Form onSubmit={onSubmit}>
-                        <FormGroup row>
-                            <Label for="youtubeURL" sm={3}>Youtube URL</Label>
-                            <Col sm={8}>
-                                <Input
-                                    id="youtubeURL"
-                                    name="youtubeURL"
-                                    placeholder="Youtube url ..."
-                                    type="url"
-                                    value={formValue.youtubeURL}
-                                    onChange={onChange}
-                                />
-
-                                <Button color="success" block className="mt-2">
-                                    Share
-                                </Button>
-                            </Col>
+                            {err && <Alert color="danger">{err}</Alert>}
+                            <FormGroup row>
+                                <Label for="youtubeURL" sm={3}>Youtube URL</Label>
+                                <Col sm={8}>
+                                    <Input
+                                        id="youtubeURL"
+                                        name="youtubeURL"
+                                        placeholder="Youtube url ..."
+                                        type="url"
+                                        value={formValue.youtubeURL}
+                                        onChange={onChange}
+                                    />
+                                    <Button color="success" block className="mt-2">Share</Button>
+                                </Col>
                             </FormGroup>
                         </Form>
                     </CardBody>
