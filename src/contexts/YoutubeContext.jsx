@@ -36,13 +36,13 @@ const YoutubeProvider = ({ children }) => {
     const validateVideoId = (videoId) => {
         let idParams
         if (typeof videoId === 'string') {
-            idParams = videoId
+            idParams = `&id=${videoId}`
         } else {
-            idParams = videoId.map(item => `&id=${item}`)
-            console.log(idParams.join(''))
+            idParams = videoId.map(item => `&id=${item}`).join('')
+            //console.log(idParams.join(''))
         }
         return new Promise((resolve, reject) => {
-            fetch(`https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${config.youtubeApiKey}`)
+            fetch(`https://youtube.googleapis.com/youtube/v3/videos?part=snippet${idParams}&key=${config.youtubeApiKey}`)
                 .then((response) => response.json())
                 .then(data => {
                     //console.log(data) 
